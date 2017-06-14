@@ -19,6 +19,7 @@ class Map extends React.Component {
     super(props);
     this.markers = [];
     this.map = {};
+    this.geojson = {};
   }
 
   removeMarkers() {
@@ -36,6 +37,11 @@ class Map extends React.Component {
     })
   }
 
+  displayGeoJSON(geojson) {
+    // this.geojson.removeFrom(this.map);
+    this.geojson = L.geoJSON(geojson).addTo(this.map);
+  }
+
   componentDidMount() {
     this.map = L.map(this.props.id).setView([43.604268, 1.441019], 13);
 
@@ -44,11 +50,13 @@ class Map extends React.Component {
     }).addTo(this.map);
 
     this.props.markers && this.displayMarkers(this.props.markers);
+    this.props.geojson && this.displayGeoJSON(this.props.geojson);
 
   }
 
   componentWillReceiveProps(nextProps) {
     this.props.markers !== nextProps.markers && this.displayMarkers(nextProps.markers);
+    this.props.geojson !== nextProps.geojson && this.displayGeoJSON(nextProps.geojson);
   }
 
   shouldComponentUpdate() {

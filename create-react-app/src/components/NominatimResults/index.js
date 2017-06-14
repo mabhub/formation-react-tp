@@ -1,26 +1,16 @@
 import React from 'react';
-import axios from 'axios';
+import nominatimService from '../../services/nominatim';
 
 class NominatimResults extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             data: []
         }
     }
-    getNominatimData() {
-        return axios.get('http://nominatim.openstreetmap.org/search/toulouse?format=json')
-            .then(function (response) {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
     componentWillMount() {
-        this.getNominatimData()
+        nominatimService.getNominatimData()
             .then((data) => this.setState({data: data}));
     }
 

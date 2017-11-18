@@ -38,6 +38,11 @@ class Map extends React.Component {
           .bindPopup(marker.display_name)
       );
     })
+
+    if (markers[0]) {
+      const marker = markers[0]
+      this.map.setView([marker.lat, marker.lon]);
+    }
   }
 
   displayGeoJSON(geojson) {
@@ -53,9 +58,7 @@ class Map extends React.Component {
   componentDidMount() {
     this.map = L.map(this.props.id).setView([43.604268, 1.441019], 13);
 
-    this.map.on('zoomend moveend', () => {
-      this.dispatchBBox(this.map.getBounds());
-    });
+    this.map.on('zoomend moveend', () => this.dispatchBBox(this.map.getBounds()));
     this.dispatchBBox(this.map.getBounds());
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -64,11 +67,12 @@ class Map extends React.Component {
 
     !!this.props.markers && this.displayMarkers(this.props.markers);
     !!this.props.geojson && this.displayGeoJSON(this.props.geojson);
-
   }
 
   componentWillReceiveProps(nextProps) {
-    !!this.props.markers !== nextProps.markers && this.displayMarkers(nextProps.markers);
+    const markerChanged = (this.props.markers[0] && this.props.markers[0].display_name) !== (nextProps.markers[0] && nextProps.markers[0].display_name);
+
+    markerChanged && this.displayMarkers(nextProps.markers);
     !!this.props.geojson !== nextProps.geojson && this.displayGeoJSON(nextProps.geojson);
   }
 
